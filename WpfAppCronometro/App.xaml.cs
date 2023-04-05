@@ -16,20 +16,39 @@ namespace WpfAppCronometro
     /// </summary>
     public partial class App : Application
     {
-
-        private void OnStartup(object sender, StartupEventArgs e)
+        private ServiceProvider serviceProvider;
+        public App()
         {
             ServiceCollection services = new ServiceCollection();
-            
+            ConfigureServices(services);
+            serviceProvider = services.BuildServiceProvider();
+        }
+        private void ConfigureServices(ServiceCollection services)
+        {
             services.AddSingleton<IClockController, ClockController>();
-            services.AddSingleton<IClock, Clock>();
+            services.AddSingleton<IClockView, ClockView>();
             services.AddSingleton<MainWindow>();
-            
-            var serviceProvider = services.BuildServiceProvider();
-
+        }
+        private void OnStartup(object sender, StartupEventArgs e)
+        {
             var mainWindow = serviceProvider.GetService<MainWindow>();
             mainWindow.Show();
-
         }
     }
 }
+        //private void OnStartup(object sender, StartupEventArgs e)
+        //{
+        //    ServiceCollection services = new ServiceCollection();
+
+        //    services.AddSingleton<IClockController, ClockController>();
+        //    services.AddSingleton<IClockView, ClockView>();
+        //    services.AddSingleton<MainWindow>();
+
+        //    var serviceProvider = services.BuildServiceProvider();
+
+        //    //var mainWindow = serviceProvider.GetService<MainWindow>();
+        //    var mainWindow = services.BuildServiceProvider().GetService<MainWindow>();
+        //    mainWindow.Show();
+
+        //}
+

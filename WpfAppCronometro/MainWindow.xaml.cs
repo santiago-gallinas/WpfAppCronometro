@@ -18,18 +18,28 @@ using System.Windows.Threading;
 namespace WpfAppCronometro
 {
     /// <summary>
+    /// Saves the exact value of the Clock
+    /// </summary>
+    static public class Clock
+    {
+        static public int Hours { get; set; }
+        static public int Minutes { get; set; }
+        static public int Seconds { get; set; }
+    }
+
+    /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
-        private Clock myClock;
-        private readonly IClockController _clockController;
-        public MainWindow(IClockController clockController)
+        public ClockController _clockController;
+        public MainWindow()
         {
             InitializeComponent();
-            myClock = new Clock(this);
-            _clockController = clockController;
+            //_clockView = clockView;
+            //_clockView = new ClockView(this);
         }
+
         private void buttonStart_Click(object sender, RoutedEventArgs e)
         {
             _clockController.Start();
@@ -43,56 +53,69 @@ namespace WpfAppCronometro
         private void buttonStop_Click(object sender, RoutedEventArgs e)
         {
             _clockController.Stop();
-            myClock.LabelHours = "00";
-            myClock.LabelMinutes = "00";
-            myClock.LabelSeconds = "00";
+            labelHours.Content = "00";
+            labelMinutes.Content = "00";
+            labelSeconds.Content = "00";
+        }
+
+        private void Window_ContentRendered(object sender, EventArgs e)
+        {
+            _clockController = new ClockController(new ClockView());
         }
     }
-    public interface IClock
+    /// <summary>
+    /// ClockView Interface 
+    /// </summary>
+    public interface IClockView
     {
         string LabelHours { get; set; }
         string LabelMinutes { get; set; }
         string LabelSeconds { get; set; }
     }
-    public class Clock
+    /// <summary>
+    /// Save all window labels 
+    /// </summary>
+    public class ClockView : IClockView
     {
-        private MainWindow _mainWindow;
-        public Clock(MainWindow mainWindow)
-        {
-            _mainWindow = mainWindow;
-        }
         public string LabelHours
         {
-            get { return _mainWindow.labelHours.Content.ToString(); ; }
-            set { _mainWindow.labelHours.Content = value; }
+            get { return ((MainWindow)Application.Current.MainWindow).labelHours.Content.ToString(); ; }
+            set { ((MainWindow)Application.Current.MainWindow).labelHours.Content = value; }
         }
         public string LabelMinutes
         {
-            get { return _mainWindow.labelMinutes.Content.ToString(); ; }
-            set { _mainWindow.labelMinutes.Content = value; }
+            get { return ((MainWindow)Application.Current.MainWindow).labelMinutes.Content.ToString(); ; }
+            set { ((MainWindow)Application.Current.MainWindow).labelMinutes.Content = value; }
         }
         public string LabelSeconds
         {
-            get { return _mainWindow.labelSeconds.Content.ToString(); ; }
-            set { _mainWindow.labelSeconds.Content = value; }
+            get { return ((MainWindow)Application.Current.MainWindow).labelSeconds.Content.ToString(); ; }
+            set { ((MainWindow)Application.Current.MainWindow).labelSeconds.Content = value; }
         }
     }
+    /// <summary>
+    /// ClockController Interface 
+    /// </summary>
     public interface IClockController
     {
         void Start();
         void Pause();
         void Stop();
     }
+    /// <summary>
+    /// Manages timer ticks 
+    /// </summary>
     public class ClockController : IClockController
     {
+        private readonly IClockView _clockView;
         DispatcherTimer timer = new DispatcherTimer();
 
-        public ClockController()
+        public ClockController(IClockView clockView)
         {
-            _clock = clock;
-            _clock.Hours = 0;
-            _clock.Minutes = 0;
-            _clock.Seconds = 0;    
+            _clockView = clockView;
+            _clockView.LabelHours = "00";
+            _clockView.LabelMinutes = "00";
+            _clockView.LabelSeconds = "00";
             timer.Interval = TimeSpan.FromSeconds(1);
             timer.Tick += GetTimerTicks;
         }
@@ -107,28 +130,29 @@ namespace WpfAppCronometro
         public void Stop()
         {
             timer.Stop();
-            _clock.Hours = 0;
-            _clock.Minutes = 0;
-            _clock.Seconds = 0;
+            Clock.Hours = 0;
+            Clock.Minutes = 0;
+            Clock.Seconds = 0;
         }
         public void GetTimerTicks(object sender, EventArgs e)
         {
-            _clock.Seconds++;
+            Clock.Seconds++;
 
-            if (_clock.Seconds == 60)
+            if (Clock.Seconds == 60)
             {
-                _clock.Seconds = 0;
-                _clock.Minutes++;
+                Clock.Seconds = 0;
+                Clock.Minutes++;
             }
 
-            if (_clock.Minutes == 60)
+            if (Clock.Minutes == 60)
             {
-                _clock.Minutes = 0;
-                _clock.Hours++;
+                Clock.Minutes = 0;
+                Clock.Hours++;
             }
-            LabelHours _clock.Hours.ToString("00");
-            //labelMinutes.Content = _clock.Minutes.ToString("00");
-            //labelSeconds.Content = _clock.Seconds.ToString("00");
+            
+            _clockView.LabelHours = Clock.Hours.ToString("00");
+            _clockView.LabelMinutes = Clock.Minutes.ToString("00");
+            _clockView.LabelSeconds = Clock.Seconds.ToString("00");
         }
     }
 }
