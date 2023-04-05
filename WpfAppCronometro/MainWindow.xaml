@@ -1,0 +1,23 @@
+﻿<Window x:Class="WpfAppCronometro.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Croometro" Height="150" Width="525">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Label x:Name="labelHours" Grid.Row="0" Grid.Column="0" Content="00" FontSize="48"/>
+        <Label x:Name="labelMinutes" Grid.Row="0" Grid.Column="1" Content="00" FontSize="48"/>
+        <Label x:Name="labelSeconds" Grid.Row="0" Grid.Column="2" Content="00" FontSize="48"/>
+        <Button x:Name="buttonStart" Grid.Row="1" Grid.Column="0" Content="Iniciar" Click="buttonStart_Click"/>
+        <Button x:Name="buttonPause" Grid.Row="1" Grid.Column="1" Content="Pausar" Click="buttonPause_Click"/>
+        <Button x:Name="buttonStop" Grid.Row="1" Grid.Column="2" Content="Parar y poner a 0" Click="buttonStop_Click"/>
+    </Grid>
+</Window>
