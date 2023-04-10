@@ -19,6 +19,7 @@ namespace WpfAppCronometro
         {
             services.AddSingleton<IClockController, ClockController>();
             services.AddSingleton<IClockView, ClockView>();
+            services.AddSingleton<Clock>();
             services.AddSingleton<MainWindow>();
         }
         private void OnStartup(object sender, StartupEventArgs e)

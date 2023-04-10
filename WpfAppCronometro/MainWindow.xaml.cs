@@ -7,11 +7,11 @@ namespace WpfAppCronometro
     /// <summary>
     /// Saves the exact value of the Clock
     /// </summary>
-    static public class Clock
+    public class Clock
     {
-        static public int Hours { get; set; }
-        static public int Minutes { get; set; }
-        static public int Seconds { get; set; }
+        public int Hours { get; set; }
+        public int Minutes { get; set; }
+        public int Seconds { get; set; }
     }
 
     /// <summary>
@@ -47,7 +47,7 @@ namespace WpfAppCronometro
 
         private void Window_ContentRendered(object sender, EventArgs e)
         {
-            _clockController = new ClockController(new ClockView());
+            _clockController = new ClockController(new ClockView(), new Clock());
         }
     }
     /// <summary>
@@ -94,11 +94,13 @@ namespace WpfAppCronometro
     /// </summary>
     public class ClockController : IClockController
     {
+        private readonly Clock _clock;
         private readonly IClockView _clockView;
         DispatcherTimer timer = new DispatcherTimer();
 
-        public ClockController(IClockView clockView)
+        public ClockController(IClockView clockView, Clock clock)
         {
+            _clock = clock;
             _clockView = clockView;
             _clockView.LabelHours = "00";
             _clockView.LabelMinutes = "00";
@@ -117,29 +119,29 @@ namespace WpfAppCronometro
         public void Stop()
         {
             timer.Stop();
-            Clock.Hours = 0;
-            Clock.Minutes = 0;
-            Clock.Seconds = 0;
+            _clock.Hours = 0;
+            _clock.Minutes = 0;
+            _clock.Seconds = 0;
         }
         public void GetTimerTicks(object sender, EventArgs e)
         {
-            Clock.Seconds++;
+            _clock.Seconds++;
 
-            if (Clock.Seconds == 60)
+            if (_clock.Seconds == 60)
             {
-                Clock.Seconds = 0;
-                Clock.Minutes++;
+                _clock.Seconds = 0;
+                _clock.Minutes++;
             }
 
-            if (Clock.Minutes == 60)
+            if (_clock.Minutes == 60)
             {
-                Clock.Minutes = 0;
-                Clock.Hours++;
+                _clock.Minutes = 0;
+                _clock.Hours++;
             }
             
-            _clockView.LabelHours = Clock.Hours.ToString("00");
-            _clockView.LabelMinutes = Clock.Minutes.ToString("00");
-            _clockView.LabelSeconds = Clock.Seconds.ToString("00");
+            _clockView.LabelHours = _clock.Hours.ToString("00");
+            _clockView.LabelMinutes = _clock.Minutes.ToString("00");
+            _clockView.LabelSeconds = _clock.Seconds.ToString("00");
         }
     }
 }
